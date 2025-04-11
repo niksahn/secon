@@ -1,0 +1,11 @@
+<resources>
+    <string name="notification_network_failure">Произошла ошибка. Повторите попытку или попробуйте позже</string>
+    <string name="no_connection_title">Нет соединения с сетью</string>
+    <string name="no_connection_description">Проверьте, работает ли интернет, и обновите страницу. Или вернитесь немного позже.</string>
+    <string name="nothing_found">Ничего не нашлось</string>
+    <string name="loading_failed_title">Не удалось загрузить данные с сервера</string>
+    <string name="loading_failed_description">Попробуйте обновить страницу или вернитесь немного позже.</string>
+    <string name="update">Обновить</string>
+    <string name="no_back_title">Не удалось загрузить данные с сервера</string>
+    <string name="no_back_description">Попробуйте обновить страницу или вернитесь немного позже</string>
+</resources>
