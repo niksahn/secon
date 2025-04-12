@@ -1,7 +1,6 @@
-package ru.secon.ui.auth
+package ru.secon.ui.auth.usual
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,7 +26,7 @@ import com.niksah.gagarin.utils.views.Spacer
 import ru.secon.core.viewModel.base.subscribeEvents
 import ru.secon.core.viewModel.base.subscribeScreenState
 import ru.secon.ui.auth.admin.AdminAuthUi
-import ru.secon.ui.tasks.TasksUi
+import ru.secon.ui.tasks.list.TasksUi
 import ru.secon.ui.views.Loading
 
 data object AuthUi : Screen {

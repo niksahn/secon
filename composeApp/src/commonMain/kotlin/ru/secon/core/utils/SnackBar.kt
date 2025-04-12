@@ -37,6 +37,9 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tnsenergoo.composeapp.generated.resources.Res
+import tnsenergoo.composeapp.generated.resources.approve
+import tnsenergoo.composeapp.generated.resources.close
+import tnsenergoo.composeapp.generated.resources.error
 import kotlin.time.Duration.Companion.milliseconds
 
 object SnackbarLayout {
@@ -133,7 +136,7 @@ object SnackbarLayout {
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        painter = painterResource(DrawableResource.close),
+                        painter = painterResource(Res.drawable.close),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -200,7 +203,7 @@ object SnackbarLayout {
     }
 
     @Composable
-    private fun Notification(notification: InAppNotificationService.Notification) {
+    fun Notification(notification: InAppNotificationService.Notification) {
         val coroutineScope = rememberCoroutineScope()
         var isNotificationVisible by remember { mutableStateOf(value = false) }
         fun close(notification: InAppNotificationService.Notification) {

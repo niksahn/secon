@@ -1,7 +1,9 @@
 package ru.secon.core.settings
 
+import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.SettingsListener
+import kotlinx.coroutines.flow.MutableStateFlow
 
 interface SettingsRepository {
     val token: NullableStringSettingConfig
@@ -10,29 +12,45 @@ interface SettingsRepository {
 
 class NullableStringSettingConfig(
     settings: Settings,
+    private val observableSettings: ObservableSettings,
     key: String,
-    defaultValue: String
-) : SettingConfig<String>(settings, key, defaultValue) {
+) : SettingConfig<String>(settings, key) {
+
+    val settingsFlow = MutableStateFlow(getValue())
+
+    init {
+        observableSettings.putString(key, getValue()?:"")
+        observableSettings.addStringOrNullListener(
+            key,
+            { settingsFlow.tryEmit(it) })
+    }
 
     override fun getValue(): String? =
         settings.getStringOrNull(key)
 
-    override fun setValue(value: String) =
+    override fun setValue(value: String) {
         settings.putString(key, value)
+        observableSettings.putString(key, value)
+    }
+
+    override fun remove() {
+        observableSettings.remove(key)
+        settings.remove(key)
+    }
+
 }
 
 
 sealed class SettingConfig<T>(
-    val settings: Settings,
-    val key: String,
-    private val defaultValue: T
+    protected val settings: Settings,
+    protected val key: String,
 ) {
-    protected abstract fun getValue(): T?
-    protected abstract fun setValue(value: T)
+    abstract fun getValue(): T?
+    abstract fun setValue(value: T)
 
     private var listener: SettingsListener? = null
 
-    fun remove() = settings.remove(key)
+    abstract fun remove(): Unit
     fun exists(): Boolean = settings.hasKey(key)
 
     fun set(value: T): Boolean {

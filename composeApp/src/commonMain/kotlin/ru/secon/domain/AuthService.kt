@@ -5,6 +5,7 @@ import ru.secon.core.monads.Either
 import ru.secon.core.monads.Operation
 import ru.secon.core.network.NetworkEndpointScope
 import ru.secon.core.network.NetworkResponse
+import ru.secon.core.network.NetworkResponseFailure
 import ru.secon.core.network.NetworkService
 import ru.secon.core.settings.SettingsRepository
 
@@ -28,7 +29,7 @@ class AuthService(
 
     suspend fun login(
         key: AuthApi.AuthBody
-    ): NetworkResponse<String> = Either.Right("")
+    ): NetworkResponse<String> = Either.Right("fefwwfw")
 }
 
 object AuthApi : NetworkEndpointScope() {

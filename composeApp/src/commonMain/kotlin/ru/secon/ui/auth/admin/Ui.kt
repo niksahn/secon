@@ -1,7 +1,6 @@
 package ru.secon.ui.auth.admin
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +14,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,9 +25,8 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.niksah.gagarin.utils.views.Spacer
 import ru.secon.core.viewModel.base.subscribeEvents
 import ru.secon.core.viewModel.base.subscribeScreenState
-import ru.secon.ui.auth.AuthState
-import ru.secon.ui.auth.AuthUi
-import ru.secon.ui.tasks.TasksUi
+import ru.secon.ui.auth.usual.AuthUi
+import ru.secon.ui.tasks.list.TasksUi
 
 data object AdminAuthUi : Screen {
     @Composable

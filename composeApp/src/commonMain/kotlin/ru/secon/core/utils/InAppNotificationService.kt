@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import org.jetbrains.compose.resources.StringResource
+import kotlin.random.Random
 import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 /** Сервис создания оповещений. */
 class InAppNotificationService() : CoroutineScope by CoroutineScope(
@@ -48,8 +48,8 @@ class InAppNotificationService() : CoroutineScope by CoroutineScope(
      * @param vibration Вибрация, сопровождающая оповещение (опционально).
      *
      */
-    data class Message @OptIn(ExperimentalUuidApi::class) constructor(
-        val id: Uuid = Uuid.random(),
+    data class Message(
+        val id: String = Random.nextBytes(200).toString(),
         val titleId: StringResource,
         val notificationType: SnackbarLayout.NotificationType,
         val title: String? = null,

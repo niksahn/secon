@@ -1,4 +1,4 @@
-package ru.secon.ui.tasks
+package ru.secon.ui.tasks.list
 
 import ru.secon.core.monads.Operation
 import ru.secon.core.network.NetworkOperation

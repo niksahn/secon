@@ -51,6 +51,7 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.composeIcons.featherIcons)
 
+            implementation(libs.multiplatform.settings.test)
             // Navigator
             implementation(libs.voyager.navigator)
             implementation(libs.voyager.screenmodel)
