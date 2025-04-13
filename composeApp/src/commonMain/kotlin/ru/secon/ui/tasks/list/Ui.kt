@@ -85,7 +85,13 @@ data object TasksUi : Screen {
                 if (state.value.reportAvailable) {
                     Button(
                         modifier = Modifier.height(64.dp),
-                        content = { Text(text = "Загрузить дневной отчет") },
+                        content = {
+                            if (state.value.loadingFile) {
+                                Loading(true)
+                            } else {
+                                Text(text = "Загрузить дневной отчет")
+                            }
+                        },
                         onClick = { viewModel.loadReport() }
                     )
                 }

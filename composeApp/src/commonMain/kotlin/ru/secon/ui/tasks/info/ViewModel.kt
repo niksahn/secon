@@ -3,6 +3,7 @@ package ru.secon.ui.tasks.info
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.decodeToImageBitmap
 import com.darkrockstudios.libraries.mpfilepicker.MPFile
+import ru.secon.core.file.FileSaver
 import ru.secon.core.image.detectBlur
 import ru.secon.core.location.LocationService
 import ru.secon.core.monads.Either
@@ -24,10 +25,14 @@ import ru.secon.data.PhotoApi
 import ru.secon.data.ReportApi
 import ru.secon.data.Resume
 import ru.secon.data.Task
+import ru.secon.data.TaskApi
 import ru.secon.data.Type
 import tnsenergoo.composeapp.generated.resources.Res
 import tnsenergoo.composeapp.generated.resources.blured
+import tnsenergoo.composeapp.generated.resources.loaded
 import tnsenergoo.composeapp.generated.resources.loading_failed_title
+import tnsenergoo.composeapp.generated.resources.not_fill
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 data class TaskInfoState(
     val task: Task? = null,
@@ -118,13 +123,15 @@ sealed class TaskInfoEvent : Event() {
 class TaskInfoViewModel(
     private val networkService: NetworkService,
     private val inAppNotificationService: InAppNotificationService,
-    private val locationService: LocationService
+    private val locationService: LocationService,
+    private val file: FileSaver
 ) : BaseViewModel<TaskInfoState, TaskInfoEvent>(
     TaskInfoState()
 ) {
-    fun clear(){
+    fun clear() {
         updateState { it.copy(task = null) }
     }
+
     fun setTask(task: Task) {
         if (currentState.task != task) {
             updateState {
@@ -159,6 +166,15 @@ class TaskInfoViewModel(
 
     fun formAct() {
         launchViewModelScope {
+            if (!validate()) {
+                inAppNotificationService.send(
+                    InAppNotificationService.Message(
+                        notificationType = SnackbarLayout.NotificationType.Error,
+                        titleId = Res.string.not_fill,
+                    )
+                )
+            }
+            val task = currentState.task ?: return@launchViewModelScope
             updateState { it.copy(actResult = Operation.Preparing) }
             val rez = when (val data = currentState.additional) {
                 is TaskInfoState.ActAdditional.New -> setResume(data)
@@ -172,10 +188,34 @@ class TaskInfoViewModel(
                         titleId = Res.string.loading_failed_title,
                     )
                 )
+                return@launchViewModelScope
             }
+            val (longitude: Double, latitude: Double) = locationService.getCoordinates()
+            networkService.request(TaskApi.complete(task.id, longitude, latitude))
             updateState { it.copy(actResult = rez?.toOperation()) }
+            trySendEvent(TaskInfoEvent.ActFormed(task))
         }
     }
+
+    private fun validate(): Boolean =
+        currentState.firstImage is Operation.Success && currentState.secondImage is Operation.Success
+                && currentState.additional?.let {
+            with(it) {
+                when (this) {
+                    is TaskInfoState.ActAdditional.New -> {
+                        deviceParams.isNotEmpty() &&
+                                (notStartReason == null || notStartReason.isNotEmpty()) &&
+                                clientName.isNotEmpty() &&
+                                (locationPlace == null || locationPlace.isNotEmpty())
+                    }
+
+                    is TaskInfoState.ActAdditional.Previously -> {
+                        deviceParams.isNotEmpty() &&
+                                (locationPlace == null || locationPlace.isNotEmpty())
+                    }
+                }
+            }
+        } == true
 
     private suspend fun setControl(
         additional: TaskInfoState.ActAdditional.Previously
@@ -210,7 +250,51 @@ class TaskInfoViewModel(
     }
 
     fun loadAct() {
-        updateState { it.copy(actResult = Operation.Preparing) }
+        launchViewModelScope {
+            val task = currentState.task ?: return@launchViewModelScope
+            updateState { it.copy(actResult = Operation.Preparing) }
+            val data = when (task.type) {
+                Type.STOP,
+                Type.RESUME -> networkService.request(ReportApi.loadResume(task.id))
+
+                Type.CONTROL -> networkService.request(ReportApi.loadControl(task.id))
+            }
+            data.fold(
+                leftTransform = {
+                    inAppNotificationService.send(
+                        InAppNotificationService.Message(
+                            notificationType = SnackbarLayout.NotificationType.Error,
+                            titleId = Res.string.loading_failed_title,
+                        )
+                    )
+                },
+                rightTransform = {
+                    file.saveFileFromBase64(
+                        base64Data = it,
+                        fileName = "Act",
+                        mimeType = "docx",
+                        onSuccess = {
+                            inAppNotificationService.send(
+                                InAppNotificationService.Message(
+                                    notificationType = SnackbarLayout.NotificationType.Approve(),
+                                    titleId = Res.string.loaded,
+                                )
+                            )
+                        },
+                        onError = {
+                            inAppNotificationService.send(
+                                InAppNotificationService.Message(
+                                    notificationType = SnackbarLayout.NotificationType.Error,
+                                    titleId = Res.string.loading_failed_title,
+                                )
+                            )
+                        }
+                    )
+                }
+
+            )
+            updateState { it.copy(actResult = null) }
+        }
     }
 
     fun setFirstImage(file: ByteArray) {

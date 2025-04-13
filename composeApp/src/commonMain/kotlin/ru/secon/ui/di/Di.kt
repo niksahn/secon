@@ -13,13 +13,13 @@ val uiModule = module {
         AuthViewModel(get(), get())
     }
     factory {
-        TaskViewModel(get())
+        TaskViewModel(get(),get(),get())
     }
     factory {
         AdminAuthViewModel(get())
     }
     factory {
-        TaskInfoViewModel(get(), get(), get())
+        TaskInfoViewModel(get(), get(), get(), get())
     }
     factory {
         CreateTaskViewModel(get(), get())

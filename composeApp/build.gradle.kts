@@ -12,7 +12,7 @@ plugins {
 }
 
 kotlin {
-    // jvmToolchain(11)
+  //  jvmToolchain(19)
     androidTarget {
         //https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-test.html
         instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
@@ -81,6 +81,7 @@ kotlin {
             implementation("com.google.android.gms:play-services-location:21.3.0")
             implementation(libs.koin.android)
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+            implementation("com.google.accompanist:accompanist-systemuicontroller:0.34.0")
 
             implementation("com.yandex.android:maps.mobile:4.13.0-lite")
 
@@ -127,8 +128,9 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "TNSEnergoo"
+            packageName = "ru.secon.TNSEnergoo"
             packageVersion = "1.0.0"
+            modules("jdk.unsupported")
 
             linux {
                 iconFile.set(project.file("desktopAppIcons/LinuxIcon.png"))

@@ -92,14 +92,14 @@ data object AuthUi : Screen {
                         onClick = onLogin
                     )
                     Spacer(16.dp)
-                    Column(
-                        Modifier.clickable(onClick = onAdminLogin).fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        HorizontalDivider()
-                        Spacer(8.dp)
-                        Text(text = "Войти как администратор")
-                    }
+//                    Column(
+//                        Modifier.clickable(onClick = onAdminLogin).fillMaxWidth(),
+//                        horizontalAlignment = Alignment.CenterHorizontally,
+//                    ) {
+//                        HorizontalDivider()
+//                        Spacer(8.dp)
+//                        Text(text = "Войти как администратор")
+//                    }
                 }
             }
             Loading(state.loading)

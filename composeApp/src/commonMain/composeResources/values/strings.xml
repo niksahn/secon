@@ -9,6 +9,7 @@
     <string name="not_auth">Неверные данные</string>
     <string name="not_fill">Не все поля заполнены</string>
     <string name="blured">Изображение сильно размыто, попробуйте другое</string>
+    <string name="loaded">Файл загружен</string>
 
     <string name="no_back_title">Не удалось загрузить данные с сервера</string>
     <string name="set_permissions">Самостоятельно укажите разрешения для приложения</string>

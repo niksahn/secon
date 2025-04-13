@@ -9,10 +9,20 @@ import ru.secon.core.network.NetworkEndpointScope
 object TaskApi : NetworkEndpointScope() {
     fun getTasks(): HttpEndpoint<List<Task>> = get("/requests")
     fun createTask(data: CreateTask): HttpEndpoint<String> = post("/requests", body = data)
-    fun formAct(data: Unit): HttpEndpoint<String> = post("/act", body = data)
+    fun complete(requestId: String, longitude: Double, latitude: Double): HttpEndpoint<Unit> =
+        put("/requests/${requestId}/set-complete", body = Geo(longitude, latitude))
+
     fun loadExel(file: ByteArray): HttpEndpoint<Unit> =
         post("/requests/by-excel", body = Excel(file.toByteString().base64()))
+
+    fun loadReports(): HttpEndpoint<String> =
+        get("/requests/day")
 }
+
+@Serializable
+data class Geo(
+    val longitude: Double, val latitude: Double
+)
 
 @Serializable
 data class Excel(
@@ -47,6 +57,12 @@ enum class Type {
         RESUME -> 1
         CONTROL -> 2
     }
+
+    override fun toString() = when (this) {
+        STOP -> "Отключение"
+        RESUME -> "Возобновление"
+        CONTROL -> "Контроль ранее введенного органичения"
+    }
 }
 
 @Serializable
@@ -74,7 +90,12 @@ data class Task(
         IN_WORK,
 
         @SerialName("1")
-        CLOSED
+        CLOSED;
+
+        override fun toString() = when (this) {
+            IN_WORK -> "В работе"
+            CLOSED -> "Закрыта"
+        }
     }
 }
 
@@ -87,6 +108,12 @@ object PhotoApi : NetworkEndpointScope() {
 }
 
 object ReportApi : NetworkEndpointScope() {
+    fun loadControl(requestId: String): HttpEndpoint<String> =
+        get("/report/control-act/$requestId")
+
+    fun loadResume(requestId: String): HttpEndpoint<String> =
+        get("/report/stop-resume-act/$requestId")
+
     fun controlAct(body: Control): HttpEndpoint<Unit> = post("/report/control-act", body = body)
     fun resumeAct(body: Resume): HttpEndpoint<Unit> = post("/report/stop-resume-act", body = body)
 }

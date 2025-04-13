@@ -31,3 +31,14 @@ suspend fun downloadWithKtor(
 }
 
 expect suspend fun saveFile(response: HttpResponse, outputPath: String)
+
+
+expect class FileSaver {
+    fun saveFileFromBase64(
+        base64Data: String,
+        fileName: String,
+        mimeType: String,
+        onSuccess: () -> Unit,
+        onError: (Throwable) -> Unit
+    )
+}
