@@ -6,6 +6,11 @@
     <string name="loading_failed_title">Не удалось загрузить данные с сервера</string>
     <string name="loading_failed_description">Попробуйте обновить страницу или вернитесь немного позже.</string>
     <string name="update">Обновить</string>
+    <string name="not_auth">Неверные данные</string>
+    <string name="not_fill">Не все поля заполнены</string>
+    <string name="blured">Изображение сильно размыто, попробуйте другое</string>
+
     <string name="no_back_title">Не удалось загрузить данные с сервера</string>
+    <string name="set_permissions">Самостоятельно укажите разрешения для приложения</string>
     <string name="no_back_description">Попробуйте обновить страницу или вернитесь немного позже</string>
 </resources>

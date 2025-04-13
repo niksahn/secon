@@ -1,8 +1,9 @@
-package com.niksah.gagarin.screens.camera
+package ru.secon.ui.camera
 
-import com.niksah.gagarin.utils.base.Event
+import ru.secon.core.viewModel.base.Event
+
 
 sealed class CameraEvent : Event() {
-	object MakedPhoto : CameraEvent()
+	data class MakedPhoto(val photo: ByteArray) : CameraEvent()
 	data class Failure(val message: String?) : CameraEvent()
 }

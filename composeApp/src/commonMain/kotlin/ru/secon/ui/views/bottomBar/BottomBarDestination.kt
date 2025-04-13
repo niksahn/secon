@@ -30,35 +30,37 @@ fun BottomBar(
         NavigationBar(
             containerColor = Color.White
         ) {
-            BottomBarDestination.entries.forEach { destination ->
-                val selected = currentDestination == destination.direction
-                NavigationBarItem(
-                    selected = selected,
-                    onClick = {
-                        navController.push(destination.direction)
-                    },
-                    icon = {
-                        Icon(
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .size(12.dp),
-                            painter = painterResource(destination.icon),
-                            contentDescription = destination.title,
-                        )
-                    },
-                    label = {
-                        Text(
-                            text = destination.title,
-                            color = Color.Black,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = SelectedIcon,
-                        unselectedIconColor = UnSelectedIcon,
-                    ),
-                )
-            }
+            BottomBarDestination.entries
+                .filter { it.show }
+                .forEach { destination ->
+                    val selected = currentDestination == destination.direction
+                    NavigationBarItem(
+                        selected = selected,
+                        onClick = {
+                            navController.push(destination.direction)
+                        },
+                        icon = {
+                            Icon(
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .size(32.dp),
+                                painter = painterResource(destination.icon),
+                                contentDescription = destination.title,
+                            )
+                        },
+                        label = {
+                            Text(
+                                text = destination.title,
+                                color = Color.Black,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = SelectedIcon,
+                            unselectedIconColor = UnSelectedIcon,
+                        ),
+                    )
+                }
         }
     }
 }

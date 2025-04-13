@@ -1,7 +1,7 @@
 package ru.secon
 
 enum class Platform {
-    Ios, Android, Web, Pc;
+    Android, Pc;
 }
 
 object CurrentPlatform {

@@ -20,7 +20,7 @@ import kotlinx.serialization.json.Json
 import ru.secon.core.settings.SettingsRepository
 import co.touchlab.kermit.Logger as KLogger
 
-const val BASE_URL = "http://heatman.duckdns.org"
+const val BASE_URL = "https://heatman.duckdns.org"
 
 class NetworkService(
     private val settingsRepository: SettingsRepository,
@@ -49,9 +49,9 @@ class NetworkService(
         }
 
         install(HttpTimeout) {
-            connectTimeoutMillis = 6000
-            requestTimeoutMillis = 6000
-            socketTimeoutMillis = 6000
+            connectTimeoutMillis = 60000
+            requestTimeoutMillis = 60000
+            socketTimeoutMillis = 60000
         }
         defaultRequest {
             url(BASE_URL)
@@ -82,7 +82,7 @@ val Auth: ClientPlugin<AuthConfig> = createClientPlugin("Auth", ::AuthConfig) {
             onLogout()
             return@onRequest
         }
-        request.headers { append("auth", cuToken) }
+        request.headers { append("Authorization", "Bearer $cuToken") }
     }
     onResponse {
         if (it.status == HttpStatusCode.Unauthorized) onLogout()
@@ -90,8 +90,7 @@ val Auth: ClientPlugin<AuthConfig> = createClientPlugin("Auth", ::AuthConfig) {
 }
 
 @KtorDsl
-class AuthConfig(
-) {
+class AuthConfig() {
     @InternalAPI
     var isUnauthorizedResponse: suspend (HttpResponse) -> Boolean =
         { it.status == HttpStatusCode.Unauthorized }

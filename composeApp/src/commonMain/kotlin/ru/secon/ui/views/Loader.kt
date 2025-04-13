@@ -77,7 +77,7 @@ fun ErrorState(
 
 @Composable
 fun InternetError(
-    buttonText: String,
+    buttonText: String?,
     icon: Painter = painterResource(Res.drawable.warning),
     modifier: Modifier = Modifier,
     title: String? = null,
@@ -124,11 +124,13 @@ fun InternetError(
                     }
                 }
             }
-            TextButton(
-                modifier = Modifier.fillMaxWidth(),
-                content = { Text(buttonText) },
-                onClick = onReloadClick
-            )
+            buttonText?.let {
+                TextButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    content = { Text(buttonText) },
+                    onClick = onReloadClick
+                )
+            }
         }
     }
 }

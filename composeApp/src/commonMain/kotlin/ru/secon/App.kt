@@ -5,32 +5,32 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
 import com.niksah.gagarin.utils.views.bottomBar.BottomBar
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
-import ru.secon.core.settings.SettingsRepository
 import ru.secon.core.utils.InAppNotificationService
 import ru.secon.core.utils.SnackbarLayout
+import ru.secon.domain.AuthService
 import ru.secon.theme.AppTheme
 import ru.secon.ui.auth.usual.AuthUi
+import ru.secon.ui.tasks.list.TasksUi
 import ru.secon.ui.views.bottomBar.BottomBarDestination
 
 @Composable
 internal fun App(
     inAppNotificationService: InAppNotificationService = koinInject<InAppNotificationService>(),
-    settingsRepository: SettingsRepository = koinInject<SettingsRepository>()
+    authService: AuthService = koinInject<AuthService>()
 ) = AppTheme {
-    Navigator(AuthUi) { navigator ->
+    val isAuth = authService.isLogin()
+    Navigator(if (isAuth) TasksUi else AuthUi) { navigator ->
         Scaffold(
             bottomBar = {
-                if (BottomBarDestination.entries.any { it.direction == navigator.lastItemOrNull } && CurrentPlatform.current == Platform.Android) {
+                if (BottomBarDestination.entries.any { it.direction == navigator.lastItemOrNull }) {
                     BottomBar(navigator)
                 }
             },
@@ -42,10 +42,15 @@ internal fun App(
                 }
             },
         )
-        CoroutineScope(Dispatchers.Main).launch {
-            settingsRepository.token.settingsFlow.collect {
-                if (it.isNullOrEmpty()) navigator.replaceAll(AuthUi)
-            }
+        LaunchedEffect(Unit) {
+            authService.observeIsLogin()
+                .collect {
+                    if (!it) {
+                        navigator.replaceAll(AuthUi)
+                    } else {
+                        navigator.replaceAll(TasksUi)
+                    }
+                }
         }
     }
 }

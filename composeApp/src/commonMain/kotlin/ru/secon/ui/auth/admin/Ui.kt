@@ -36,7 +36,7 @@ data object AdminAuthUi : Screen {
         val state = viewModel.subscribeScreenState()
         viewModel.subscribeEvents {
             when (it) {
-                AdminAuthEvent.OnHome -> navigator.push(TasksUi)
+                AdminAuthEvent.OnHome ->{}
             }
         }
         Ui(

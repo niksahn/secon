@@ -51,6 +51,8 @@ sealed interface HttpError {
             /** 400 */
             val BadRequest: ClientRequestError = ClientRequestError(400)
 
+            val UnAuth: ClientRequestError = ClientRequestError(401)
+
             /** 404 */
             val NotFound: ClientRequestError = ClientRequestError(404)
         }

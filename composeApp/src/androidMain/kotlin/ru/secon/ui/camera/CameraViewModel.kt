@@ -1,32 +1,19 @@
-package com.niksah.gagarin.screens.camera
+package ru.secon.ui.camera
 
 import android.content.Context
-import android.net.Uri
 import android.os.Build
-import com.niksah.gagarin.data.FileStorageRepository
-import com.niksah.gagarin.data.models.fold
-import com.niksah.gagarin.data.repositories.ApiRepository
-import com.niksah.gagarin.data.repositories.ResponseRepository
-import com.niksah.gagarin.data.repositories.SettingsRepository
-import com.niksah.gagarin.utils.base.BaseViewModel
+import com.darkrockstudios.libraries.mpfilepicker.MPFile
 import com.ujizin.camposer.state.CameraState
 import com.ujizin.camposer.state.ImageCaptureResult
-import java.io.IOException
+import ru.secon.core.viewModel.base.BaseViewModel
+import ru.secon.data.FileStorageRepository
 
-class CameraViewModel(
-    private val responseRepository: ResponseRepository,
+class
+CameraViewModel(
     private val storageRepository: FileStorageRepository,
-    private val apiRepository: ApiRepository,
-    private val settingsRepository: SettingsRepository
+    private val context: Context
 ) : BaseViewModel<CameraScreenState, CameraEvent>(init()) {
 
-    init {
-       updateState {
-           it.copy(
-               userId = settingsRepository.id.get()?:""
-           )
-       }
-    }
     fun takePicture(cameraState: CameraState) {
         launchViewModelScope {
             updateState {
@@ -46,6 +33,12 @@ class CameraViewModel(
         }
     }
 
+    fun loadFile(file: MPFile<Any>) {
+        launchViewModelScope {
+            trySendEvent(CameraEvent.MakedPhoto(file.getFileByteArray()))
+        }
+    }
+
     private fun onImageResult(imageResult: ImageCaptureResult) {
         launchViewModelScope {
             updateState { it.copy(makingPhoto = false) }
@@ -54,47 +47,11 @@ class CameraViewModel(
                 is ImageCaptureResult.Success -> {
                     launchViewModelScope {
                         getFile()?.readBytes()?.let { file ->
-                            apiRepository.uploadImage(file, currentState.userId).fold(
-                                ifLeft = {
-                                    print(it)
-                                    trySendEvent(CameraEvent.Failure("Network error"))
-                                },
-                                ifRight = {
-                                //    responseRepository.history.emit(it)
-                                    trySendEvent(CameraEvent.MakedPhoto)
-                                }
-                            )
+                            trySendEvent(CameraEvent.MakedPhoto(file))
                         }
                     }
                 }
             }
-        }
-    }
-
-    @Throws(IOException::class)
-    private fun readBytes(context: Context, uri: Uri): ByteArray? =
-        context.contentResolver.openInputStream(uri)?.use { it.buffered().readBytes() }
-
-    fun onResultScan(uri: Uri, context: Context) {
-        launchViewModelScope {
-            readBytes(context, uri)?.let { file ->
-                apiRepository.uploadImage(file,  currentState.userId).fold(
-                    ifLeft = {
-                        print(it)
-                        trySendEvent(CameraEvent.Failure("Network error"))
-                    },
-                    ifRight = {
-                      //  responseRepository.history.emit(it)
-                        trySendEvent(CameraEvent.MakedPhoto)
-                    }
-                )
-            }
-        }
-    }
-
-    fun onNotEnableScanner() {
-        updateState {
-            it.copy(showScanner = false)
         }
     }
 

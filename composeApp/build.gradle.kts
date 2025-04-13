@@ -12,7 +12,7 @@ plugins {
 }
 
 kotlin {
-   // jvmToolchain(11)
+    // jvmToolchain(11)
     androidTarget {
         //https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-test.html
         instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
@@ -21,13 +21,17 @@ kotlin {
     jvm()
 
     @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
-        binaries.executable()
-    }
+//    wasmJs {
+//        browser()
+//        binaries.executable()
+//    }
 
     sourceSets {
         commonMain.dependencies {
+
+//            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp:0.1.0")
+//            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp-compose:0.1.0")
+
             implementation(libs.lifecycle.viewmodel.compose)
 
             implementation(compose.runtime)
@@ -50,6 +54,7 @@ kotlin {
             implementation(libs.multiplatformSettings)
             implementation(libs.kotlinx.datetime)
             implementation(libs.composeIcons.featherIcons)
+            implementation(libs.mpfilepicker)
 
             implementation(libs.multiplatform.settings.test)
             // Navigator
@@ -73,12 +78,21 @@ kotlin {
             implementation(libs.androidx.activityCompose)
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.ktor.client.okhttp)
+            implementation("com.google.android.gms:play-services-location:21.3.0")
+            implementation(libs.koin.android)
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+
+            implementation("com.yandex.android:maps.mobile:4.13.0-lite")
+
+            implementation(libs.accompanist.permissions)
+            implementation("io.github.ujizin:camposer:0.4.0")
         }
 
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.ktor.client.okhttp)
+
         }
 
     }
@@ -89,7 +103,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 26
         targetSdk = 35
 
         applicationId = "ru.secon.androidApp"

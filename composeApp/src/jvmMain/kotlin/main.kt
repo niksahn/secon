@@ -5,14 +5,15 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import org.koin.core.context.startKoin
-import java.awt.Dimension
 import ru.secon.App
+import ru.secon.core.domainJvmModule
 import ru.secon.data.di.dataModule
 import ru.secon.ui.di.uiModule
+import java.awt.Dimension
 
 fun main() = application {
     startKoin {
-        modules(listOf(dataModule,uiModule))
+        modules(listOf(dataModule, uiModule, domainJvmModule))
     }
     Window(
         title = "TNSEnergoo",
@@ -26,4 +27,6 @@ fun main() = application {
 
 @Preview
 @Composable
-fun AppPreview() { App() }
+fun AppPreview() {
+    App()
+}
